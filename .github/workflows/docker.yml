@@ -34,6 +34,11 @@ jobs:
         run: |
           echo "VERSION=latest" >> $GITHUB_ENV
           echo "VERSION_SUFFIX=-unstable" >> $GITHUB_ENV
+      - name: Extract version (if fix-workflows)
+        if: github.event.ref == 'refs/heads/fix-workflows'
+        run: |
+          echo "VERSION=latest" >> $GITHUB_ENV
+          echo "VERSION_SUFFIX=-wip" >> $GITHUB_ENV
       - name: Extract version (if tagged release)
         if: startsWith(github.event.ref, 'refs/tags')
         run: |
