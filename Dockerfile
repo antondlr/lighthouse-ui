@@ -5,8 +5,8 @@ FROM $node_image AS builder
 
 COPY . /app/
 
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1 \
+    NODE_ENV=development
 
 WORKDIR /app
 RUN yarn --network-timeout 300000
@@ -27,7 +27,9 @@ ENV NODE_ENV=production
 RUN npm install --global pm2
 RUN apk add -U nginx openssl
 
+COPY ./.env.example /app/
 COPY ./docker-assets /app/docker-assets/
+
 RUN rm /etc/nginx/http.d/default.conf; \
     ln -s /app/docker-assets/siren-http.conf /etc/nginx/http.d/siren-http.conf
 
