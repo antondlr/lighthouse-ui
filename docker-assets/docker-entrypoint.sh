@@ -1,23 +1,18 @@
 #!/bin/ash
 
-# if no .env found, dump the default to stdout and exit
-if [ ! -f /app/.env ]
-then
-  printf "No \`/.env\` file found at the expected location (\`/app/.env\`). \n\
-Please adapt this default file to your needs and mount it within the container: \n\
-----------------\n"
-  cat /app/.env.example
-  printf "----------------\n"
-  exit 1
-fi
-
-# load .env 
-set -a; \
-. /app/.env; \
+# configure default vars if none provided
+set -a 
+PORT=${PORT:-3000}
+BACKEND_URL=${BACKEND_URLs:-=http://127.0.0.1:3001}
+BEACON_URL=${BEACON_URL:-http://your-BN-ip:5052}
+VALIDATOR_URL=${VALIDATOR_URL:-http://your-VC-ip:5062}
+API_TOKEN=${API_TOKEN:-"get-it-from-'.lighthouse/validators/api-token.txt'"}
+SESSION_PASSWORD=${SESSION_PASSWORD:-default-siren-password}
+SSL_ENABLED=${SSL_ENABLED:-true}
 set +a
 
 # if bn/vc api unreachable, print message and exit
-tests="${BEACON_URL:-http://your-BN-ip:5052} ${VALIDATOR_URL:-http://your-VC-ip:5062}"
+tests="${BEACON_URL} ${VALIDATOR_URL}"
 for test in $tests; do 
   nc -z "${test#*//}"
   if [ $? -eq 1 ]; then
@@ -26,7 +21,7 @@ for test in $tests; do
   fi
 done
 # check api token
-api_response_code=$(curl -sIX GET "${VALIDATOR_URL:-http://127.0.0.1}/lighthouse/version" -H "Authorization: Bearer ${API_TOKEN:-default_siren_token}" | head -n 1 | awk '{print $2}')
+api_response_code=$(curl -sIX GET "${VALIDATOR_URL}/lighthouse/version" -H "Authorization: Bearer ${API_TOKEN}" | head -n 1 | awk '{print $2}')
 if [ "$api_response_code" != '200' ]; then
   printf "validator api issue, server response: %s \n" "${api_response_code:-no_response}"  
   fail=true

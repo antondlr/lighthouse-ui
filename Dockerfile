@@ -16,7 +16,6 @@ RUN yarn --network-timeout 300000; \
 
 FROM alpine AS intermediate
 
-COPY ./.env.example /app/
 COPY ./docker-assets /app/docker-assets/
 
 COPY --from=builder /app/backend/package.json /app/backend/package.json
