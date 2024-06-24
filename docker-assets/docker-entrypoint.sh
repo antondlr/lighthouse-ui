@@ -28,7 +28,7 @@ done
 # check api token
 api_response_code=$(curl -sIX GET "${VALIDATOR_URL:-http://127.0.0.1}/lighthouse/version" -H "Authorization: Bearer ${API_TOKEN:-default_siren_token}" | head -n 1 | awk '{print $2}')
 if [ "$api_response_code" != '200' ]; then
-  printf "validator api issue, server response: $api_response_code\n"  
+  printf "validator api issue, server response: %s \n" "${api_response_code:-no_response}"  
   fail=true
 fi
 
