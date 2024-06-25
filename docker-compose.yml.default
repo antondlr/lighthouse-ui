@@ -1,0 +1,12 @@
+services:
+  siren:
+    image: sigp/siren
+    ports:
+      - "4443:443" # remove this line when using `SSL_ENABLED=false`
+#      - "4080:80"  # uncomment this line when using `SSL_ENABLED=false`
+    environment:
+      - BEACON_URL=http://your-BN-ip:5052
+      - VALIDATOR_URL=http://your-VC-ip:5062
+      - API_TOKEN=get-it-from-'.lighthouse/validators/api-token.txt'
+      - SESSION_PASSWORD=default-siren-password
+      - SSL_ENABLED=true
