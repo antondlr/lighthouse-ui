@@ -50,7 +50,7 @@ The docker image can be built with the following command:
 
 ### Building locally
 
-Building from source requires `Node v18` and `yarn`.
+Building from source requires `Node v18.18` and `yarn`.
 
 #### Build and run the backend
 
