@@ -1,4 +1,4 @@
-#!/bin/ash
+#!/bin/bash
 
 # configure default vars if none provided
 set -a 
@@ -37,7 +37,8 @@ if [ $SSL_ENABLED = true ] ; then
     openssl req -x509 -newkey rsa:4096 -keyout /certs/key.pem -out /certs/cert.pem -days 365 -passout pass:'sigmaprime' -subj "/C=AU/CN=siren/emailAddress=noreply@sigmaprime.io"
     echo 'sigmaprime' > /certs/key.pass
   fi
-  ln -s /app/docker-assets/siren-https.conf /etc/nginx/http.d/siren-https.conf
+#  ln -s /app/docker-assets/siren-https.conf /etc/nginx/http.d/siren-https.conf
+  ln -s /app/docker-assets/siren-https.conf /etc/nginx/conf.d/siren-https.conf   
 fi
 
 

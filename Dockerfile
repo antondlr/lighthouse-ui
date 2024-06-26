@@ -27,14 +27,18 @@ COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/public /app/public
 COPY --from=builder /app/.next /app/.next
 
-FROM node:${node_version}-alpine AS production
+#FROM node:${node_version}-alpine AS production
+FROM $node_image AS production
 
 ENV NODE_ENV=production
 RUN npm install --global pm2; \
-    apk add --no-cache nginx openssl curl
+    apt update; \
+    apt install -y nginx openssl curl
 
-RUN rm /etc/nginx/http.d/default.conf; \
-    ln -s /app/docker-assets/siren-http.conf /etc/nginx/http.d/siren-http.conf
+#RUN rm /etc/nginx/http.d/default.conf; \
+#    ln -s /app/docker-assets/siren-http.conf /etc/nginx/http.d/siren-http.conf
+
+RUN ln -s /app/docker-assets/siren-http.conf /etc/nginx/conf.d/siren-http.conf
 
 COPY --from=intermediate /app /app/
 
