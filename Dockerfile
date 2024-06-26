@@ -4,15 +4,15 @@ ARG node_image=node:${node_version}
 FROM $node_image AS builder
 
 ENV NEXT_TELEMETRY_DISABLED=1 \
-    NODE_ENV=production
+    NODE_ENV=development
 WORKDIR /app
 COPY . /app/
 
 RUN yarn --network-timeout 300000; \
-    yarn build
+    NODE_ENV=production yarn build
 WORKDIR /app/backend
 RUN yarn --network-timeout 300000; \
-    yarn build
+    NODE_ENV=production yarn build
 
 FROM alpine AS intermediate
 
@@ -27,7 +27,6 @@ COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/public /app/public
 COPY --from=builder /app/.next /app/.next
 
-#FROM node:${node_version}-alpine AS production
 FROM $node_image AS production
 
 ENV NODE_ENV=production
@@ -35,10 +34,8 @@ RUN npm install --global pm2; \
     apt update; \
     apt install -y nginx openssl curl
 
-#RUN rm /etc/nginx/http.d/default.conf; \
-#    ln -s /app/docker-assets/siren-http.conf /etc/nginx/http.d/siren-http.conf
-
-RUN ln -s /app/docker-assets/siren-http.conf /etc/nginx/conf.d/siren-http.conf
+RUN rm /etc/nginx/sites-enabled/default; \
+    ln -s /app/docker-assets/siren-http.conf /etc/nginx/conf.d/siren-http.conf
 
 COPY --from=intermediate /app /app/
 
